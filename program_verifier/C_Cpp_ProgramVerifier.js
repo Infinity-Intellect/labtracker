@@ -5,7 +5,7 @@ const compileC_FamilyProgram1 = (filepath, accept, reject) => {
     const executableObject = path.parse(filepath).name
     const extension = path.parse(filepath).ext
     const command = extension === '.c' ? 'cc' : 'c++'
-    exec(`${command} ${filepath} -o ${executableObject}`, (err, stdout, stderr) => {
+    exec(`${command} ${filepath} -o ./sampleprogram/${executableObject}`, (err, stdout, stderr) => {
         if (stderr) {
             return reject(stderr)
         }
@@ -15,11 +15,11 @@ const compileC_FamilyProgram1 = (filepath, accept, reject) => {
     })
 }
 const runC_FamilyProgram = (executableObject, inputCasesFilePath, accept, reject) => {
-    exec(`./${executableObject}<${inputCasesFilePath} 1>${executableObject}.txt`, (err, stdout, stderr) => {
+    exec(`./sampleprogram/${executableObject}<${inputCasesFilePath} 1>./sampleprogram/${executableObject}.txt`, (err, stdout, stderr) => {
         if (stderr) {
             return reject(stderr)
         }
-        return accept(`${executableObject}.txt`)
+        return accept(`./sampleprogram/${executableObject}.txt`)
     })
 }
 

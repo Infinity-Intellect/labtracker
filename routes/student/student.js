@@ -52,9 +52,8 @@ router.post("/verifyProgram", async (req, res) => {
         res.send(result);
       })
       .catch((err) => {
-        console.log(err);
+        res.send(err)
       });
-    res.end("File is uploaded");
   });
 });
 
