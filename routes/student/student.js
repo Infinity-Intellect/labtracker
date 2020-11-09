@@ -5,6 +5,7 @@ const path = require("path");
 var bodyParser = require("body-parser");
 express().use(bodyParser.urlencoded({ extended: false }));
 const fs = require("fs");
+const Student = require('../../models/student');
 
 //Import Program verifier functions
 const verifyCProgram = require("../../program_verifier/C_Cpp_ProgramVerifier");
@@ -56,5 +57,47 @@ router.post("/verifyProgram", async (req, res) => {
       });
   });
 });
-
+router.post('/update',(req, res)=>{
+  Student.find({userId:req.body.userId},(err,docs)=>{
+      if(!err){
+          var newStudent=new Student({
+              userId:req.body.userId,
+              studentId:req.body.studentId,
+              name:req.body.name,
+              sem:req.body.sem,
+              lab_prog_ids:[]  
+            }) 
+          if(docs.length==0){
+                newStudent.save({}, (err, docs) => {
+                  if (!err) {
+                      res.json({ message: "Information Updated!" })
+                  }
+                  else {
+                      res.json({ error: err })
+                  }
+              }) 
+          }
+          else{
+              Student.updateOne({userId:req.body.userId},{$set:{userId:req.body.userId,
+                  studentId:req.body.studentId,
+                  name:req.body.name,
+                  sem:req.body.sem}
+              },(err, result) => {
+                  if (!err) {
+                      res.json({ message: "Information Updated!" })
+                  }
+                  else{
+                      res.json({ error: err })
+                  }
+                  
+              })
+              
+              
+          }      
+      }
+      else{
+          res.json({ error: err })
+      }
+  })
+})
 module.exports = router;
