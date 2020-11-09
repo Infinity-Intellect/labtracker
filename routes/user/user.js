@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const User = require('../../models/user.js');
+const User = require('../../models/user');
 
 router.post('/adduser',(req, res)=>{
     User.find({userId:req.body.userId},(err,docs)=>{
@@ -12,15 +12,7 @@ router.post('/adduser',(req, res)=>{
                     email:req.body.email,
                     role:req.body.role
                 })
-                var newStudent=new Student({
-                    userId:req.body.userId,
-                    studentId:req.body.studentId,
-                    name:req.body.name,
-                    sem:req.body.sem,
-                    lab_prog_ids:[]  
-                  })
-                  
-                  newStudent.save();
+        
                 newUser.save({},(err,docs)=>{
                     if (!err) {
                         res.json({ message: "User Created!" })
