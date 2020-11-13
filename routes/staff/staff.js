@@ -9,7 +9,6 @@ router.post('/update',(req, res)=>{
             var newStaff=new Staff({
                 userId:req.body.userId,
                 staffId:req.body.staffId,
-                name:req.body.name,
                 lab_ids:[]  
               }) 
             if(docs.length==0){
@@ -25,7 +24,6 @@ router.post('/update',(req, res)=>{
             else{
                 Staff.updateOne({userId:req.body.userId},{$set:{userId:req.body.userId,
                     staffId:req.body.staffId,
-                    name:req.body.name,
                     }
                 },(err, result) => {
                     if (!err) {

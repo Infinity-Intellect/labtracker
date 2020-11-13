@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 
 var labSchema = mongoose.Schema({
-    labId: {
-        type: String,
-        required: "Id required"
+    labId:{
+        type: String
     },
     lab_name: {
         type: String,
         required: "Lab_name required"
     },
-    lab_ids: {
-        type: Array,
-    },
+    exer_ids:[{
+        type: String
+    }],
     staff_ids:{
         type: Array,
     },

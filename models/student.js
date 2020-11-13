@@ -9,17 +9,14 @@ var studentSchema = mongoose.Schema({
         type: String,
         required: "StudentId required"
     },
-    name: {
-        type: String,
-        required:"Name required"
-    },
+  
     sem: {
         type: Number,
         required:"Sem required"
     },
-    lab_prog_ids:{
-        type: Array,
-    }
+    lab_prog_ids:[{
+            type: String
+        }],
 })
 
 module.exports = mongoose.model('students', studentSchema);

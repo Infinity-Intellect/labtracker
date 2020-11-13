@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 var staffSchema = mongoose.Schema({
+    
     userId: {
         type: String,
         required: "Id required"
@@ -9,13 +10,10 @@ var staffSchema = mongoose.Schema({
         type: String,
         required: "StudentId required"
     },
-    name: {
-        type: String,
-        required:"Name required"
-    },
-    lab_ids:{
-        type: Array,
-    }
+    
+    lab_ids: [{
+            type: String
+        }],
 })
 
 module.exports = mongoose.model('staffs', staffSchema);

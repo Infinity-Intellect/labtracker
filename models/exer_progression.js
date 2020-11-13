@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
 var exer_progressionSchema = mongoose.Schema({
-    exer_progressionId: {
-        type: String,
-        required: "Id required"
+    exerProgId:{
+        type: String
     },
-    exer_id: {
+    exerId: {
         type: String,
         required: "ExerId required"
     },

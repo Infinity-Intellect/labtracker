@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 var exerciseSchema = mongoose.Schema({
-    exerId: {
-        type: String,
-        required: "Id required"
+    exerId:{
+        type: String
     },
     title: {
         type: String,
@@ -19,25 +18,23 @@ var exerciseSchema = mongoose.Schema({
     },
     input_file_location:{
         type:String,
-        required:"i/p file location required"
     },
     output_file_location:{
         type:String,
-        required:"o/p file location required"
     },
     deadline:{
-        type:Date,
+        type:String,
         required:"Deadline Required"
     },
     date_of_creation:{
-        type:Date,
+        type:String,
         required:"Date of creation required"
     },
-    lab_id:{
+    labId:{
         type:String,
         required:"Lab id required"
     },
-    discussion_id:{
+    discussionId:{
         type:String,
         required:"Discussion id required"
     }

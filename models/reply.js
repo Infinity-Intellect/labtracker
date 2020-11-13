@@ -1,18 +1,17 @@
 const mongoose = require('mongoose');
 
-var staffSchema = mongoose.Schema({
-    replyId: {
-        type: String,
-        required: "Id required"
+var replySchema = mongoose.Schema({
+    replyId:{
+        type: String
     },
     value: {
         type: String,
         required: "Value required"
     },
-    user_id:{
+    userId:{
         type: String,
         required:"Userid required"
     }
 })
 
-module.exports = mongoose.model('staffs', staffSchema);
+module.exports = mongoose.model('replies', replySchema);

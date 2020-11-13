@@ -4,15 +4,15 @@ const router = express.Router();
 const User = require('../../models/user');
 
 router.post('/adduser',(req, res)=>{
-    User.find({userId:req.body.userId},(err,docs)=>{
+    User.find({email:req.body.email},(err,docs)=>{
         if(!err){
             if(docs.length==0){
                 var newUser=new User({
-                    userId:req.body.userId,
+                    name:req.body.name,
                     email:req.body.email,
                     role:req.body.role
-                })
-        
+                })   
+                newUser.userId=newUser._id   
                 newUser.save({},(err,docs)=>{
                     if (!err) {
                         res.json({ message: "User Created!" })

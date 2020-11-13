@@ -63,7 +63,6 @@ router.post('/update',(req, res)=>{
           var newStudent=new Student({
               userId:req.body.userId,
               studentId:req.body.studentId,
-              name:req.body.name,
               sem:req.body.sem,
               lab_prog_ids:[]  
             }) 
@@ -80,7 +79,6 @@ router.post('/update',(req, res)=>{
           else{
               Student.updateOne({userId:req.body.userId},{$set:{userId:req.body.userId,
                   studentId:req.body.studentId,
-                  name:req.body.name,
                   sem:req.body.sem}
               },(err, result) => {
                   if (!err) {
