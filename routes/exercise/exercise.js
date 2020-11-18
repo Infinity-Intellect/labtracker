@@ -1,5 +1,10 @@
 const express = require("express");
 const router = express.Router();
+var formidable = require('formidable');
+var fs = require('fs');
+var rimraf = require("rimraf");
+const path = require("path");
+
 
 const Lab = require('../../models/lab');
 const LabProgression = require('../../models/lab_progression');
@@ -8,6 +13,7 @@ const Exercise = require("../../models/exercise");
 const ExerciseProg=require("../../models/exer_progression")
 const Comment= require('../../models/comment');
 const Reply=require('../../models/reply');
+const verifyCProgram = require("../../program_verifier/C_Cpp_ProgramVerifier");
 
 router.post('/addexer',async (req,res)=>{
   var today =await new Date();
@@ -130,5 +136,75 @@ router.post('/viewexer',async (req,res)=>{
         }
     })
 })
-
+router.post('/uploadfiles',async (req,res)=>{
+   
+    var form = new formidable.IncomingForm();
+    form.parse(req,async function (err, fields, files) {
+    await Exercise.find({exerId:fields.exerId},async (err,docs)=>{
+        const filetypes = /c/;
+        const extname = filetypes.test(path.extname(files.input.name).toLowerCase())
+        const extname1= filetypes.test(path.extname(files.output.name).toLowerCase())
+        console.log(fields.exerId)
+        if(docs.length>0 && extname && extname1){
+            if (!fs.existsSync('./Exercises/'+fields.exerId)){
+                await fs.mkdirSync('./Exercises/'+fields.exerId);
+                await fs.mkdirSync('./Exercises/'+fields.exerId+'/submissions');
+            }
+            else{
+                await rimraf.sync('./Exercises/'+fields.exerId);
+                await fs.mkdirSync('./Exercises/'+fields.exerId);
+                await fs.mkdirSync('./Exercises/'+fields.exerId+'/submissions');
+            }
+            var oldpath = files.input.path;
+            var newpath = './Exercises/'+fields.exerId+'/input.txt';
+            var oldpath1=files.output.path;
+            var newpath1='./Exercises/'+fields.exerId+'/output.txt';
+            await fs.rename(oldpath, newpath,async function (err) {
+                if (err) throw err;
+                await fs.rename(oldpath1,newpath1,async function(err){
+                    if(err) throw err
+                    await Exercise.updateOne({exerId:fields.exerId},{$set:{input_file_location:newpath,output_file_location:newpath1}})
+                })
+            });
+                res.json({ message: "Input/Output Files Uploaded!" })
+        }
+        else{
+            res.json({ message: "Exercise Not Found!" })
+        }
+    });
+    })
+})
+router.post("/verifyprogram", async (req, res) => {
+    var form = new formidable.IncomingForm();
+    form.parse(req,async function (err, fields, files) {
+        if (!fs.existsSync('./Exercises/'+fields.exerId)){
+            await fs.mkdirSync('./Exercises/'+fields.exerId+'/submissions/'+fields.studentId);
+        }
+        else{
+            await rimraf.sync('./Exercises/'+fields.exerId+'/submissions/'+fields.studentId);
+            await fs.mkdirSync('./Exercises/'+fields.exerId+'/submissions/'+fields.studentId); 
+        }
+        var oldpath = files.program.path;
+        var newpath = './Exercises/'+fields.exerId+'/submissions/'+fields.studentId+'/'+files.program.name;
+        const filetypes = /c/;
+        const extname = filetypes.test(path.extname(files.program.name).toLowerCase())
+        if(extname){
+        await fs.rename(oldpath, newpath,async function (err) {
+            if(err) throw err;
+            const inputfilepath = './Exercises/'+fields.exerId+'/input.txt';
+            const outputfilepath = './Exercises/'+fields.exerId+'/output.txt';
+            verifyCProgram(newpath, inputfilepath, outputfilepath)
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => {
+                res.send(err)
+            });
+        })
+        }
+        else{
+            res.json({ message: "File Format ERROR!" })
+        }
+    })
+});
 module.exports=router;
