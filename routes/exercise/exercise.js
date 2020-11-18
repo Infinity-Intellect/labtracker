@@ -16,10 +16,12 @@ const Reply=require('../../models/reply');
 const verifyCProgram = require("../../program_verifier/C_Cpp_ProgramVerifier");
 
 router.post('/addexer',async (req,res)=>{
-  var today =await new Date();
+  var today =await new Date().getTime();
   var deadline=await new Date();
   deadline=deadline.setDate(deadline.getDate() + Number(req.body.timelimit))
-  deadline=await new Date(deadline);
+  deadline=new Date(deadline);
+  deadline=await new Date(deadline.getFullYear(),deadline.getMonth(),deadline.getDate()).getTime();
+  console.log(deadline)
    await Exercise.find({$or:[{title:req.body.title},{$and:[{labId:req.body.labId},{exer_no:req.body.exer_no}]}]},async (err,docs)=>{
         if(docs.length==0){
             var newDiscussion= new Discussion()
@@ -55,7 +57,7 @@ router.post('/addexer',async (req,res)=>{
 router.post('/updateexer',async (req,res)=>{
   var deadline=await new Date();
   deadline=deadline.setDate(deadline.getDate() + Number(req.body.timelimit))
-  deadline=await new Date(deadline);
+  deadline=await Date.parse(deadline);
    await Lab.find({labId:req.body.labId},async (err,docs1)=>{
     if(docs1.length>0){
         await console.log("1");

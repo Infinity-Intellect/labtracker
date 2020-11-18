@@ -23,11 +23,11 @@ var exerciseSchema = mongoose.Schema({
         type:String,
     },
     deadline:{
-        type:String,
+        type:Number,
         required:"Deadline Required"
     },
     date_of_creation:{
-        type:String,
+        type:Number,
         required:"Date of creation required"
     },
     labId:{
