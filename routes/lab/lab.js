@@ -140,8 +140,11 @@ router.post('/updatelab',async (req,res)=>{
     var d = new Date();
     var n = d.getFullYear();
     await Lab.updateOne({labId:req.body.labId},{$set:{lab_name:req.body.lab_name,lab_code:req.body.lab_code},$addToSet:{student_ids:req.body.student_ids,staff_ids:req.body.staff_ids}},async (err,doc)=>{
-        if(req.body.staff_ids.length>0 && req.body.student_ids.length>0){
-            await Staff.updateMany({staffId:{$in:req.body.staff_ids}},{$addToSet:{lab_ids:req.body.labId}},async (err,doc)=>{
+        if(req.body.staff_ids.length>0 && req.body.staff_ids!=undefined){
+            await Staff.updateMany({staffId:{$in:req.body.staff_ids}},{$addToSet:{lab_ids:req.body.labId}},async (err,doc)=>{})
+        }
+        if(req.body.student_ids.length>0 && req.body.student_ids!=undefined){
+            console.log(req.body.student_ids)
                 for(i=0;i<req.body.student_ids.length;i++){
                         var newLabProg=new LabProgression({
                           labId:req.body.labId,
@@ -149,11 +152,9 @@ router.post('/updatelab',async (req,res)=>{
                         })
                         newLabProg.labProgId=newLabProg._id;
                         await newLabProg.save()
-                        console.log(req.body.student_ids[i])
                         await Student.updateOne({studentId:req.body.student_ids[i]},{$addToSet:{lab_prog_ids:newLabProg._id}})
                 }
-            })
-        }
+            }
         await res.json({ message: "Lab Updated!" }) 
     })
 })

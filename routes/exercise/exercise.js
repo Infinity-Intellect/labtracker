@@ -55,13 +55,15 @@ router.post('/addexer',async (req,res)=>{
     })
 })
 router.post('/updateexer',async (req,res)=>{
-  var deadline=await new Date();
-  deadline=deadline.setDate(deadline.getDate() + Number(req.body.timelimit))
-  deadline=await Date.parse(deadline);
+    var deadline=await new Date();
+    deadline=deadline.setDate(deadline.getDate() + Number(req.body.timelimit))
+    deadline=new Date(deadline);
+    deadline=await new Date(deadline.getFullYear(),deadline.getMonth(),deadline.getDate()).getTime();
    await Lab.find({labId:req.body.labId},async (err,docs1)=>{
     if(docs1.length>0){
         await console.log("1");
         await Exercise.find({exerId:req.body.exerId},async (err,docs)=>{
+            console.log(req.body.timelimit,req.body.exer_no)
         if(docs.length>0){
             if(req.body.labId!=docs[0].labId){
                 await console.log("2");
@@ -69,7 +71,11 @@ router.post('/updateexer',async (req,res)=>{
                     await Lab.updateOne({labId:req.body.labId},{$addToSet:{exer_ids:req.body.exerId}},async (err,docs)=>{})
                 })  
             }
+
             await Exercise.updateOne({exerId:req.body.exerId},{$set:{title:req.body.title,exer_no:req.body.exer_no,prob_stmt:req.body.prob_stmt,deadline:deadline}},async (err)=>{
+                if(err)
+                    console.log(err);
+                    console.log(deadline)
                 res.json({ message: "Information Updated!" })                    
             })
         }
