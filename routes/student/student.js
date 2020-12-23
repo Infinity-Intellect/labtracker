@@ -6,6 +6,10 @@ var bodyParser = require("body-parser");
 express().use(bodyParser.urlencoded({ extended: false }));
 const fs = require("fs");
 const Student = require('../../models/student');
+const LabProg = require('../../models/lab_progression');
+const Lab = require('../../models/lab');
+
+
 
 //Import Program verifier functions
 const verifyCProgram = require("../../program_verifier/C_Cpp_ProgramVerifier");
@@ -96,6 +100,31 @@ router.post('/update',(req, res)=>{
       else{
           res.json({ error: err })
       }
+  })
+})
+router.post('/viewStudent',async (req,res)=>{
+  list=[];
+  console.log("new")
+
+  await Student.find({userId:req.body.userId},async (err,docs)=>{
+    if(docs.length>0){
+      console.log("new")
+      for(i=0;i<docs.length;i++){
+          await LabProg.find({labProgId:{$in:docs[i].lab_prog_ids}},async (err,docs1)=>{
+            console.log(docs1)
+            for(j=0;j<docs1.length;j++){
+              await list.push(docs1[j].labId);
+            }
+            console.log(list)
+            await Lab.find({labId:{$in:list}},async (err,docs2)=>{
+              res.json({message:docs2});
+            })
+          })
+      }
+    }
+    else{
+      res.json({message:"Student Not Found"})
+    }
   })
 })
 module.exports = router;
