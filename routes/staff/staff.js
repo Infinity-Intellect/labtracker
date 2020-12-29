@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const Staff = require('../../models/staff');
+const Lab = require('../../models/lab');
+
 
 router.post('/update',(req, res)=>{
     Staff.find({userId:req.body.userId},(err,docs)=>{
