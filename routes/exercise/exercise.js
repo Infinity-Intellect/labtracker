@@ -4,6 +4,7 @@ var formidable = require('formidable');
 var fs = require('fs');
 var rimraf = require("rimraf");
 const path = require("path");
+const mv = require('mv');
 
 
 const Lab = require('../../models/lab');
@@ -149,10 +150,11 @@ router.post('/uploadfiles',async (req,res)=>{
     var form = new formidable.IncomingForm();
     form.parse(req,async function (err, fields, files) {
     await Exercise.find({exerId:fields.exerId},async (err,docs)=>{
-        const filetypes = /c/;
+        const filetypes = /txt/;
         const extname = filetypes.test(path.extname(files.input.name).toLowerCase())
         const extname1= filetypes.test(path.extname(files.output.name).toLowerCase())
         console.log(fields.exerId)
+        try{
         if(docs.length>0 && extname && extname1){
             if (!fs.existsSync('./Exercises/'+fields.exerId)){
                 await fs.mkdirSync('./Exercises/'+fields.exerId);
@@ -167,18 +169,42 @@ router.post('/uploadfiles',async (req,res)=>{
             var newpath = './Exercises/'+fields.exerId+'/input.txt';
             var oldpath1=files.output.path;
             var newpath1='./Exercises/'+fields.exerId+'/output.txt';
-            await fs.rename(oldpath, newpath,async function (err) {
-                if (err) throw err;
-                await fs.rename(oldpath1,newpath1,async function(err){
-                    if(err) throw err
-                    await Exercise.updateOne({exerId:fields.exerId},{$set:{input_file_location:newpath,output_file_location:newpath1}})
-                })
+            // await fs.rename(oldpath, newpath,async function (err) {
+            //     if (err) throw err;
+            //     await fs.rename(oldpath1,newpath1,async function(err){
+            //         if(err) throw err
+            //         await Exercise.updateOne({exerId:fields.exerId},{$set:{input_file_location:newpath,output_file_location:newpath1}})
+            //     })
+            // });
+            mv(oldpath, newpath, function (err) {
+                if (err) {
+                    console.log('> FileServer.jsx | route: "/files/upload" | err:', err);
+                    throw err;
+                }
+                else{
+                    mv(oldpath1, newpath1, async function (err) {
+                        if (err) {
+                            console.log('> FileServer.jsx | route: "/files/upload" | err:', err);
+                            throw err;
+                        }
+                        else{
+                            await Exercise.updateOne({exerId:fields.exerId},{$set:{input_file_location:newpath,output_file_location:newpath1}})
+
+                        }
+                    });
+                }
             });
+            
+            
                 res.json({ message: "Input/Output Files Uploaded!" })
         }
         else{
             res.json({ message: "Exercise Not Found!" })
         }
+    }
+    catch(err){
+        console.log(err)
+    }
     });
     })
 })
@@ -197,18 +223,23 @@ router.post("/verifyprogram", async (req, res) => {
         const filetypes = /c/;
         const extname = filetypes.test(path.extname(files.program.name).toLowerCase())
         if(extname){
-        await fs.rename(oldpath, newpath,async function (err) {
-            if(err) throw err;
-            const inputfilepath = './Exercises/'+fields.exerId+'/input.txt';
-            const outputfilepath = './Exercises/'+fields.exerId+'/output.txt';
-            verifyCProgram(newpath, inputfilepath, outputfilepath)
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => {
-                res.send(err)
+            mv(oldpath, newpath, function (err) {
+                if (err) {
+                    console.log('> FileServer.jsx | route: "/files/upload" | err:', err);
+                    throw err;
+                }
+                else{
+                    const inputfilepath = './Exercises/'+fields.exerId+'/input.txt';
+                    const outputfilepath = './Exercises/'+fields.exerId+'/output.txt';
+                    verifyCProgram(newpath, inputfilepath, outputfilepath)
+                    .then((result) => {
+                        res.send(result);
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    });
+                }
             });
-        })
         }
         else{
             res.json({ message: "File Format ERROR!" })
