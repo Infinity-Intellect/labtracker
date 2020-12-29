@@ -137,4 +137,17 @@ router.get('/viewAllLabs',async (req,res)=>{
       }
   })       
 })
+router.get('/allStudents',async (req,res)=>{
+  await Student.find({},async (err,docs)=>{
+    if(docs.length>0){
+      res.json(docs);
+    }else if(err){
+      console.log(err);
+    }
+    else{
+      res.json({ message: "No students Found!"});
+    }
+
+  })
+})
 module.exports = router;

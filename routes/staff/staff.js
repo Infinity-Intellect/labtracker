@@ -55,4 +55,17 @@ router.get('/viewAllLabs',async (req,res)=>{
         }
     })       
   })
+  router.get('/allStaffs',async (req,res)=>{
+    await Staff.find({},async (err,docs)=>{
+      if(docs.length>0){
+        res.json(docs);
+      }else if(err){
+        console.log(err);
+      }
+      else{
+        res.json({ message: "No staffs Found!"});
+      }
+  
+    })
+  })
 module.exports=router;
