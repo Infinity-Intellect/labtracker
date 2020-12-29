@@ -127,4 +127,14 @@ router.post('/viewStudent',async (req,res)=>{
     }
   })
 })
+router.get('/viewAllLabs',async (req,res)=>{
+  await Lab.find({student_ids:{$all:[req.query.studentId]}},async (err,docs)=>{
+      if(docs.length>0){
+          res.json(docs);
+      }
+      else{
+          res.json({ message: "Lab Not Found!" })
+      }
+  })       
+})
 module.exports = router;
