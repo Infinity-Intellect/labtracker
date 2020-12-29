@@ -44,7 +44,7 @@ router.post('/update',(req, res)=>{
     })
 })
 router.get('/viewAllLabs',async (req,res)=>{
-    await Lab.find({student_ids:{$all:[req.query.staffId]}},async (err,docs)=>{
+    await Lab.find({staff_ids:{$all:[req.query.staffId]}},async (err,docs)=>{
         if(docs.length>0){
             res.json(docs);
         }
