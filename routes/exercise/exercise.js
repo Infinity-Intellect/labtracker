@@ -36,14 +36,14 @@ router.post('/addexer',async (req,res)=>{
             })
             newExer.exerId=newExer._id;
             newExer.discussionId=newDiscussion._id;
-            await newExer.save({},async (err,docs)=>{
+            await newExer.save({},async (err,docs1)=>{
                 if(err){
                     console.log(err)
                 }
                 else{
                     await newDiscussion.save({},async (err,docs)=>{
                         await Lab.updateOne({labId:req.body.labId},{$addToSet:{exer_ids:newExer._id}},async (err,docs)=>{
-                            res.json({ message: "Information Updated!" })
+                            res.json({docs1})
                         })
                     })
                 }
@@ -149,7 +149,8 @@ router.post('/uploadfiles',async (req,res)=>{
     var form = new formidable.IncomingForm();
     form.parse(req,async function (err, fields, files) {
     await Exercise.find({exerId:fields.exerId},async (err,docs)=>{
-        const filetypes = /c/;
+        console.log(docs)
+        const filetypes = /txt/;
         const extname = filetypes.test(path.extname(files.input.name).toLowerCase())
         const extname1= filetypes.test(path.extname(files.output.name).toLowerCase())
         console.log(fields.exerId)
