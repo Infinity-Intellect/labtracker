@@ -37,14 +37,14 @@ router.post('/addexer',async (req,res)=>{
             })
             newExer.exerId=newExer._id;
             newExer.discussionId=newDiscussion._id;
-            await newExer.save({},async (err,docs)=>{
+            await newExer.save({},async (err,docs1)=>{
                 if(err){
                     console.log(err)
                 }
                 else{
                     await newDiscussion.save({},async (err,docs)=>{
                         await Lab.updateOne({labId:req.body.labId},{$addToSet:{exer_ids:newExer._id}},async (err,docs)=>{
-                            res.json({ message: "Information Updated!" })
+                            res.json(docs1)
                         })
                     })
                 }
@@ -228,12 +228,12 @@ router.post("/verifyprogram", async (req, res) => {
                     console.log('> FileServer.jsx | route: "/files/upload" | err:', err);
                     throw err;
                 }
-                else{
+                else{   
                     const inputfilepath = './Exercises/'+fields.exerId+'/input.txt';
                     const outputfilepath = './Exercises/'+fields.exerId+'/output.txt';
                     verifyCProgram(newpath, inputfilepath, outputfilepath)
                     .then((result) => {
-                        res.send(result);
+                        res.json({message:result});
                     })
                     .catch((err) => {
                         res.send(err)

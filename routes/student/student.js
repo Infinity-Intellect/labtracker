@@ -54,7 +54,7 @@ router.post("/verifyProgram", async (req, res) => {
     const outputfilepath = `./sampleprogram/output.txt`;
     verifyCProgram(filepath, inputfilepath, outputfilepath)
       .then((result) => {
-        res.send(result);
+        res.json({message:result});
       })
       .catch((err) => {
         res.send(err)
