@@ -158,4 +158,15 @@ router.post('/updatelab',async (req,res)=>{
         await res.json({ message: "Lab Updated!" }) 
     })
 })
+
+router.get('/viewAllLabs',async (req,res)=>{
+    await Lab.find({}).populate('exer_ids').exec(async (err,docs)=>{
+        if(docs.length>0){
+            res.json(docs);
+        }
+        else{
+            res.json({ message: "Lab Not Found!" })
+        }
+    })
+})
 module.exports=router;

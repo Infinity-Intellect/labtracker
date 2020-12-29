@@ -9,7 +9,8 @@ var labSchema = mongoose.Schema({
         required: "Lab_name required"
     },
     exer_ids:[{
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'exercises'
     }],
     staff_ids:{
         type: Array,
